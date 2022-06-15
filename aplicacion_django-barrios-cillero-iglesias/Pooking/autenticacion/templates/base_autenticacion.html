@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es-es">
+  {% load static %}
+  
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pooking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+    
+      body,html{
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-image: url("{% static 'images/fondo.jpg' %}");
+        font-family: 'Roboto', sans-serif;
+      }
+
+    
+    .container{
+      margin-top: 3em;
+      display: grid;
+      gap: 2.5em;
+    }
+    
+    .form-group{
+      position: relative;
+      --color: #5757577e;
+    
+    }
+    
+    .form-control{
+    width: 100%;
+    background: none;
+    color: #706c6c;
+    font-size: 1rem;
+    padding: .6em .3em;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid var(--color);
+    }
+    
+    .form-control:not(:placeholder-shown){
+      color: #4d4646;
+    }
+    
+    .form-control:focus + .form-label,
+    .form-control:not(:placeholder-shown) + .form-label{
+      transform: translateY(-12px) scale(.7);
+      transform-origin: left top;
+      color: #3866f2;
+    }
+    
+    .form-label{
+    color: var(--color);
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 5px;
+    transform: translateY(10px);
+    transition: transform .5s, color .3s;
+    }
+    
+    .submit{
+      background:  #3866f2;
+      color: #fff;
+      font-weight: 300;
+      font-size: 1rem;
+      padding: .8em 0;
+      border: none;
+      border-radius: .5em;
+    }
+    
+    .form-line{
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height:1px;
+      background-color: #3866f2;
+      transform: scale(0);
+      transform: left bottom;
+      transition: transform;
+    }
+    
+    
+    .form-control:focus ~ .form-line,
+    .form-control:not(:placeholder-shown) ~ .form-line{
+    transform: scale(1);
+    }
+    
+     @media (max-width:400px){
+      .login, .register{
+        width: 90%;
+      }
+     }
+    
+    </style>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+    
+    <!-- Bootstrap core CSS 
+    <link href="{% static "reviews/vendor/bootstrap/css/bootstrap.min.css"%}" rel="stylesheet">
+    <script src="{% static "reviews/vendor/bootstrap/js/bootstrap.min.js"%}"></script>
+    -->
+
+    <!-- jQuery 
+    <script src="{% static "reviews/vendor/jquery/jquery.min.js"%}"></script>
+    -->
+    
+    <!-- Custom styles for this template 
+    <link href="{% static "reviews/css/1-col-portfolio.css"%}" rel="stylesheet">
+    -->
+  </head>
+
+  <body>
+      
+      {% block content %}{% endblock content %}
+
+  </body>
+
+</html>

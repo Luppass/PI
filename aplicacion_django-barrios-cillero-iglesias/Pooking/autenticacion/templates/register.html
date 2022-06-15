@@ -1,0 +1,77 @@
+{% extends "base_autenticacion.html" %} {% block content %}
+      <style>
+         .register{
+      border: 1px solid #e1e1e1;
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 17px;
+      width: 300px;
+      position: absolute;
+      top: 50%;
+      left:30%;
+      box-shadow: 0 5px 10px -5px rgb(255 255 255 / 100%);
+      transform: translate(-50%,-50%); 
+    }
+    
+      </style>
+            <form name="formulario_registro" class="register" onsubmit=" verifyPass();" method="post">{% csrf_token %}
+                <h2>Registro</h2>
+                <div class="container" role="form" aria-label="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="username" name="username" placeholder=" " autocomplete="on" required>
+                        <label for="username" class="form-label"> Username</label>
+                        <span class="form-line"></span>
+                    </div>
+                    <div class="form-group" role="navigation" aria-label="emailr">
+                        <input type="email" class="form-control" id="email" name="email" placeholder=" " autocomplete="on" required>
+                        <label for="email" class="form-label"> Email</label>
+                        <span class="form-line"></span>
+                    </div>
+                    <div class="form-group" role="navigation" aria-label="passr">
+                        <input type="password" class="form-control" id="passwd" placeholder=" " name="passwd" required>
+                        <label for="passwd" class="form-label"> Contraseña</label>
+                        <span class="form-line"></span>
+                    </div>
+                    <div class="form-group" role="navigation" aria-label="passr">
+                        <input type="password" class="form-control" id="repitedpasswd" placeholder=" " name="repitedpasswd" required>
+                        <label for="repitedpasswd" class="form-label"> Repita la contraseña</label>
+                        <span class="form-line"></span>
+                    </div>
+
+                    <div class="mostrar" role="checkbox" aria-label="check">
+                        <label for="checkpassregister"><br>
+                            <input type = "checkbox" onclick="showpswd()" id="checkpassregister"> Mostrar contraseña</label><br>
+                    </div>
+                
+
+                    <input role="searchbox" type="submit" class="submit" id="confirm_register"  name="confirm_register" value="Aceptar">
+                </div>
+            </form>
+        <script> 
+            function showpswd() {
+                const pas1 = document.getElementById("passwd");
+                const pas2 = document.getElementById("repitedpasswd");
+                if (pas1.type === "password" && pas2.type === "password") {
+            
+                    pas1.type = "text";
+                    pas2.type = "text";
+            
+                } else {
+            
+                    pas1.type = "password";
+                    pas2.type = "password";
+            
+                }
+            }
+
+            async function verifyPass() {
+                // Obtenemos los valores de los campos de contraseñas
+                const pas1 = document.getElementById("passwd").value;
+                const pas2 = document.getElementById("repitedpasswd").value;
+                if (pas1 !== pas2){
+                    alert("Las dos claves son distintas... \n Porfavor, introduce la misma contraseña ");
+                    return false;
+                }
+        }
+        </script>
+        {% endblock %}

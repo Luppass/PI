@@ -1,0 +1,50 @@
+{% extends "base_autenticacion.html" %} {% load static %} {% block content %} 
+<style>
+      .login{
+      border: 1px solid #e1e1e1;
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 17px;
+      width: 300px;
+      position: absolute;
+      top: 50%;
+      left:30%;
+      box-shadow: 0 5px 10px -5px rgb(255 255 255 / 100%);
+      transform: translate(-50%,-50%); 
+    }
+</style>
+<form role="form" method="post" class="login"> {% csrf_token %}
+  <h2 class="form_tittle"> INICIA SESIÓN</h2>
+  <div class="register" aria-label="link" role="link">
+    <label>¿Todavía no tienes cuenta?</label>
+    <a href="/autenticacion/registro" style="color: #3866f2 ">Registrate</a>
+</div>
+<div class="container">
+    <div class="form-group">
+      <input type="text" class="form-control" id="uname" name="uname" placeholder=" " required>
+      <label for="uname" class="form-label">Username</label>
+      <span class="form-line"></span>
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-control" id="psw" name="psw" placeholder=" " required>
+      <label for="psw" class="form-label">Password</label>
+      <span class="form-line"></span>
+    </div>
+    <div class="checkbox">
+      <label><input type="checkbox" onclick="showpswd()"> Mostrar contraseña</label>
+    </div>
+      <button type="submit" class="submit" >Enviar</button>
+  </div>
+  </form>
+    <script/>
+            function showpswd() {
+                const pas1 = document.getElementById("psw");
+                if (pas1.type === "password") {
+                    pas1.type = "text";
+                } else {
+                    pas1.type = "password";
+                    
+                }
+            }
+    </script> 
+{% endblock %}

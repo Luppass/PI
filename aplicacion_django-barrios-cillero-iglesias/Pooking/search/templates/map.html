@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html>
+	{% load static %}
+<head> 
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Maps JavaScript API</title>
+	<style> 
+	 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+  	  
+	 body,html{
+		font-family: 'Roboto', sans-serif;
+		background-color:rgb( 229, 244, 251);
+		background-size: 11px 11px;
+	 }
+	 #map {
+		position:relative;
+        height: 600px;
+        width: 50%;
+        margin-top: 50px;
+		padding-top: 5px;
+		margin-left: 20px;
+		float: left;
+		border: 1px solid #e1e1e1;
+		background-color: #fff;
+		border-radius: 5px;
+		box-shadow: 0 5px 10px -5px rgb(0 0 0 / 100%);
+      }
+
+	  #tiempo {
+		float:right;
+		background-color: rgba(255, 255, 255,.7);
+		margin-top:50px;
+		margin-right:250px;
+		word-spacing:10px;
+		border: 1px solid #e1e1e1;
+		border-radius: 5px;
+		box-shadow: 0 5px 10px -5px rgb(0 0 0 / 60%);
+	  }
+
+	  #listado {
+		margin-top:15px;
+		padding-top: 10px;
+		padding-left: 100px;
+		margin-left: 10px;
+		float: left;
+		height: auto;
+		width:36%;
+		  }
+
+	  #scroll {
+		margin:auto;
+		height:505px;
+		overflow:hidden;
+		overflow-y: scroll;
+		border: 1px solid #e1e1e1;
+		background-color: #fff;
+		border-radius: 5px;
+		box-shadow: 0 5px 10px -5px rgb(0 0 0 / 50%);
+	  }
+
+	  .ventana{
+		background: rgba(0,0,102,1);
+		width: 30%;
+		color: rgb(255, 255, 255,1);
+		text-align: center;
+		padding: 33px;
+		min-height: 250px;  
+		border-radius: 22px;
+		position: absolute;
+		left: 30%;
+		top:25%;
+		display: none;
+	  }
+	  
+	  .ventana2{
+		background: rgba(0,0,102,1);
+		width: 40%;
+		color: rgb(255, 255, 255,1);
+		text-align: center;
+		padding: 33px;
+		min-height: 500px;  
+		border-radius: 22px;
+		position: absolute;
+		left: 55%;
+		top:10%;
+		display: none;
+	  }
+		.button{
+		background: rgb(0, 120, 225);
+		color: #fff;
+		font-weight: 300;
+		font-size: 1rem;
+		padding: .8em 0;
+		border: none;
+		border-radius: .5em;
+	}
+	  #cerrar, #cerrar2{
+		  position: absolute;
+		  right: 3px;
+		  top: 1px;
+	  }
+
+	  #boton_ventana{	 
+		  float: right;
+	   }
+	   #boton_centro{
+		   position: absolute;
+		   margin-left: 300px;
+		   margin-top: 10px;
+		   width: 15%;
+	   }
+
+	  #valoracion, #radio, #tipolugar{
+		text-align: left;
+		font-size: 20px;
+		line-height: 3;
+		width: 300px;
+	  }
+	  #boton_aplicar{
+		float: right;
+		margin-top: 5px;
+		margin-right: 10px;
+		width: 100px;
+		height: 40px;
+	  }
+
+	  .imagen{
+		  width: 50%;
+		  height: 50%;
+
+	  }
+	  .coordenadas{
+		border: 1px solid #e1e1e1;
+		border-radius: 5px;
+		width: 250px;
+		float: right;
+		box-shadow: 0 5px 10px -5px rgb(0 0 0 / 100%);
+		font-size: medium;
+	  }
+
+	  .descripcion{
+		float: inline-end;
+	  }
+
+	  @media (max-width:400px){
+    #map{
+      width: 90%;
+	  height: 90%;
+    }
+   }
+	</style> 
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+</head>  
+	<body>
+		<div id="radio" style="display:none;visibility:hidden">
+			{{radio}}
+		</div>
+		<div id="csrf" style="display:none;visibility:hidden">
+			{% csrf_token %}
+		</div>
+		<div id="boton_centro">
+			<label for="buttom">
+				<input type="button",  class="button" id="boton", value="Clickame para centrar", onclick="botonClick()" >
+			</label>
+
+		</div>
+		<div id ="map"> </div> 
+
+		<div id="boton_ventana">
+			<label for="boton_ventana" role="button">
+				<input type="image", src="{% static 'imagenes/simbolo-de-herramienta-llena-de-filtro.png' %}" width="40px", height="40px" id="boton", onclick="mostrarVentana()">
+			</label>
+
+		</div>
+
+		<div id="tiempo" style="font-size:20px">
+			{{ciudad}}
+			<img src="http://openweathermap.org/img/w/{{icon}}.png" >
+			{{temp}} ºC
+			<br> {{time}}
+		</div>
+
+		<div id="listado">
+			<div id="scroll">
+				<table class="table table-hover" >
+					<thead>
+					  <tr>
+						<th scope="col"> </th>
+						<th scope="col">Nombre</th>
+						<th scope="col">Valoración</th>
+						<th scope="col"> Info</th>
+					  </tr>
+					</thead>
+					<tbody>
+						{% for my_list in listaDeLocalizaciones %}
+					  <tr>
+						<th scope="row"> </th>
+						<td name="marcador">{{ my_list.0}}
+							<p name="indice" style="display:none;visibility:hidden">{{ forloop.counter }}</p>
+						</td>
+						<td>{{my_list.3}} </td>
+						<td> <input type="button" class="button" value="mas info" onclick="botonMasInfo('{{my_list.5}}'), mostrarVentana2()" style="width: 80px"></td>
+						
+					  </tr>
+					  {% endfor %}
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+
+
+		{% block content %}
+
+		<form name="formulario_busqueda" action = "#" method="post"> {% csrf_token %}
+		<div class = "ventana" id="ventana">
+			<div id="cerrar"> <a href="javascript:cerrar()"><img src="{% static 'imagenes/close.png' %}" width="20px" height="20px"></a> </div>
+			<div id="radio"> 
+				<label for ="radio">
+					Radio <select name="radio" id="radio" style="width : 40%; height : 30px">
+					<option value="5" checked >5</option>
+					<option value="10" checked >10</option>
+					<option value="15" checked >15</option>
+				</select>
+				</label>
+			</div>
+			<div id="boton_aplicar">
+				<label for="boton_aplicar">
+					<input type="submit", id="boton_aplicar", class="button"value="Aplicar" >
+				</label>
+			</div>
+			<div id="valoracion">
+				Valoración
+				<br><label><input type="checkbox" id="ascendente" name="mayor-menor" value="true">Mayor a menor</label>
+				<br><label><input type="checkbox" id="descendente" name="menor-mayor" value="true">Menor a mayor</label>
+			</div>
+			<div id="tipolugar"> 
+				<label for ="tipolugar">
+					Tipo <select name="tipolugar" id="tipolugar" style="width : 50%; height : 30px">
+					<option value="museum" checked >Museo</option>
+					<option value="monuments" checked >Monumento</option>
+					<option value="beaches" checked >Playa</option>
+					<option value="churches" checked >Iglesia</option>
+					<option value="squares" checked >Plaza</option>
+				</select>
+				</label>
+		    </div>
+			<div id="lugar" style="display:none; visibility:hidden"> 
+				<label for ="lugar">
+					Tipo <select name="lugar" id="lugar">
+					<option value="{{ciudad}}" checked >{{ciudad}}</option>
+				</select>
+				</label>
+		    </div>
+			<div id="lon" style="display:none; visibility:hidden"> 
+				<label for ="lon">
+					Tipo <select name="lon" id="lon">
+					<option value="{{lon}}" checked >{{lon}}</option>
+				</select>
+				</label>
+		    </div>
+			<div id="lat" style="display:none; visibility:hidden"> 
+				<label for ="lat">
+					Tipo <select name="lat" id="lat">
+					<option value="{{lat}}" checked >{{lat}}</option>
+				</select>
+				</label>
+		    </div>
+		</div>
+	</form>
+
+	<div class = "ventana2" id="ventana2">
+		<div id="cerrar2"> <a href="javascript:cerrar2()"><img src="{% static 'imagenes/close.png' %}" width="20px" height="20px"></a> </div>
+		<img id="imagen" class="imagen" src=" " alt="no hay imagen disponible del sitio" style="float: left;"> 
+		<div class="coordenadas">
+			<div id="lonven" class="lon"></div>
+			<div id="latven" class="lat"></div>
+		</div>
+		<br><div class="descripcion" id="desc"></div>
+
+	</div>
+
+
+
+	{% endblock %}
+
+		
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkLg0lwMaBbpVMvXewskqzNPykMii9gPg&callback=initMap" async defer></script>
+	<script type="text/javascript">
+		var locations = {{listaDeLocalizaciones|safe}}; <!-- sin el "|safe" nos imprimia "&#x27;" en lugar de "'" -->
+    	var map;
+		var marcadores = new Array()
+		
+  		function initMap() {
+			
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: {{lat}}, lng: {{lon}}},
+        		zoom: 15,
+				//mapTypeId: 'satellite'
+    		});
+
+			var botones = document.getElementsByName("marcador");
+			var infowindow = new google.maps.InfoWindow();
+			var marker, i;
+
+			for (i = 0; i < locations.length; i++) {
+				marker = new google.maps.Marker({
+					position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+					map: map
+				});
+				marcadores.push(marker)//para usar luego
+
+				google.maps.event.addListener(marker, 'click', (function(marker, i) {
+					return function() {
+					infowindow.setContent(locations[i][0]);
+					infowindow.open(map, marker);
+					}
+				})(marker, i));
+
+				botones[i].addEventListener("click",function () {
+					var parrafo = this.getElementsByTagName('p');
+					//infowindow.open(map, marcadores[parseInt(parrafo[0].innerText)]);
+					map.setCenter(marcadores[parseInt(parrafo[0].innerText) - 1].getPosition()); 
+					map.setZoom(19);
+				});
+			}
+			
+			/*for (i = 0; i < x.length; i++) {
+				
+				google.maps.event.addListener(marker, "click", function () {
+					infowindow.setContent(this.html);
+					infowindow.open(map, this);
+					map.setCenter(this.getPosition()); 
+					map.setZoom(10);
+				});
+			}*/
+
+    	}
+
+		function botonClick(){
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					const lat = position.coords.latitude;
+					const lon = position.coords.longitude;
+					divRadio = document.getElementById('radio')
+					numRadio = parseInt(divRadio.innerText)
+					divCsrf = document.getElementById('csrf')
+					csrfName = divCsrf.getElementsByTagName('input')['csrfmiddlewaretoken'].name
+					csrfToken = divCsrf.getElementsByTagName('input')['csrfmiddlewaretoken'].value
+					const Http = new XMLHttpRequest();
+					const url = 'http://127.0.0.1:8000/search/';
+					Http.open("POST",url);
+					Http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+					Http.setRequestHeader("X-CSRFToken", csrfToken);
+					Http.send(JSON.stringify({'radio':numRadio,'lat':lat,'lon':lon,}));
+
+					Http.onreadystatechange=(e)=>{
+						if(Http.status == 200 && Http.responseText != ''){
+							document.open();
+							document.write(Http.responseText);
+							document.close();
+						}
+					}
+				});
+				
+			}
+ 		}
+
+	 function mostrarVentana(){
+		 document.getElementById("ventana").style.display="block";
+	 }
+	 function mostrarVentana2(){
+		 document.getElementById("ventana2").style.display="block";
+	 }
+		
+
+	function cerrar(){
+		document.getElementById("ventana").style.display="none"
+	}
+	function cerrar2(){
+		document.getElementById("ventana2").style.display="none"
+	}
+
+	function botonMasInfo(xid){
+		const Http = new XMLHttpRequest();
+		const url = 'http://127.0.0.1:8000/search/site/' + xid;
+		Http.open("GET",url);
+		Http.send();
+	
+		Http.onreadystatechange=(e)=>{
+			if(Http.status == 200 && Http.responseText != ''){
+				const data = JSON.parse(Http.responseText);
+				document.getElementById("imagen").src=data['imagenURL'];
+				document.getElementById("desc").innerHTML=data['descripcion'];
+				document.getElementById("lonven").innerText=data['lon'];
+				document.getElementById("latven").innerText=data['lat'];
+				console.log(data['imagenURL']);
+				console.log(data['descripcion']);
+				console.log(data['lon']);
+				console.log(data['lat']);
+			}
+		}
+	 }
+	</script>
+
+	</body> 
+</html>
